@@ -15,7 +15,7 @@ Cu.import("resource://gre/modules/Services.jsm");
 Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 Cu.importGlobalProperties(["URL", "crypto", "URLSearchParams"]);
 
-const log = createLog("shield-study-utils", Log.Level.Debug);
+const log = createLog("shield-study-utils", "Debug");
 
 // telemetry utils
 const CID = Cu.import("resource://gre/modules/ClientID.jsm", null);
@@ -398,10 +398,11 @@ class StudyUtils {
 
 function createLog(name, levelWord) {
   Cu.import("resource://gre/modules/Log.jsm");
-  var log = Log.repository.getLogger(name);
-  log.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
-  log.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
-  return log;
+  var L = Log.repository.getLogger(name);
+  L.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
+  L.debug("log made", name, levelWord, Log.Level[levelWord]);
+  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
+  return L;
 }
 /** addon state change reasons */
 const REASONS = {

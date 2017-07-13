@@ -18,9 +18,9 @@ this.startup = async function(addonData, reason) {
     studyName: studyConfig.studyName,
     endings: studyConfig.endings,
     addon: {id: addonData.id, version: addonData.version},
-    telemetry: studyConfig.telemetry
+    telemetry: studyConfig.telemetry,
   });
-  studyUtils.setLoggingLevel(config.log.studyUtils)
+  studyUtils.setLoggingLevel(config.log.studyUtils.level);
   const variation = await chooseVariation();
   studyUtils.setVariation(variation);
 
@@ -37,9 +37,9 @@ this.startup = async function(addonData, reason) {
       return;
     }
   }
-  await studyUtils.startup({reason: reason});
+  await studyUtils.startup({reason});
 
-  console.log(`info ${JSON.stringify(studyUtils.info())}`);;
+  console.log(`info ${JSON.stringify(studyUtils.info())}`);
   // if you have code to handle expiration / long-timers, it could go here.
   const webExtension = addonData.webExtension;
   webExtension.startup().then(api => {
@@ -86,10 +86,10 @@ for (const r in REASONS) { REASONS[REASONS[r]] = r; }
 // logging
 function createLog(name, levelWord) {
   Cu.import("resource://gre/modules/Log.jsm");
-  var log = Log.repository.getLogger(name);
-  log.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
-  log.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
-  return log;
+  var L = Log.repository.getLogger(name);
+  L.addAppender(new Log.ConsoleAppender(new Log.BasicFormatter()));
+  L.level = Log.Level[levelWord] || Log.Level.Debug; // should be a config / pref
+  return L;
 }
 
 async function chooseVariation() {
