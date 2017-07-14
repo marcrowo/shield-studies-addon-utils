@@ -1,17 +1,16 @@
 "use strict";
 
-/*eslint no-unused-vars: ["error", { "varsIgnorePattern": "config" }]*/
-
 /* to use:
 
-- this file has chrome privileges
-- Cu.import will work for any 'general firefox things' (Services,etc)
+- Recall this file has chrome privileges
+- Cu.import in this file will work for any 'general firefox things' (Services,etc)
   but NOT for addon-specific libs
 */
 
+/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "(config|EXPORTED_SYMBOLS)" }]*/
 var EXPORTED_SYMBOLS = ["config"];
 
-// var slug = "shield-example-addon"; // matches chrome.manifest;
+// var slug = "shield-example-addon"; // should match chrome.manifest;
 
 var config = {
   "study": {
@@ -65,6 +64,7 @@ var config = {
   },
   "isEligible": async function() {
     // get whatever prefs, addons, telemetry, anything!
+    // Cu.import can see 'firefox things', but not package things.
     return true;
   },
   // addon-specific modules to load/unload during `startup`, `shutdown`

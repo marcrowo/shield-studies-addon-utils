@@ -219,6 +219,10 @@ class StudyUtils {
     this.throwIfNotSetup("getvariation");
     return this._variation;
   }
+  getShieldId() {
+    const key = "extensions.shield-recipe-client.user_id";
+    return Services.prefs.getCharPref(key, "");
+  }
   info() {
     log.debug("getting info");
     this.throwIfNotSetup("info");
@@ -226,7 +230,7 @@ class StudyUtils {
       studyName: this.config.studyName,
       addon: this.config.addon,
       variation: this.getVariation(),
-      // TODO normandy id?
+      shieldId: this.getNormandyId(),
     };
   }
   // TODO glind, maybe this is getter / setter?
@@ -270,12 +274,13 @@ class StudyUtils {
       this._telemetry({study_state: "installed"}, "shield-study");
     }
   }
-  async shutdown(reason) {
-    this.throwIfNotSetup("shutdown");
-    log.debug(`shutdown ${reason}`);
-  }
   async endStudy({reason, fullname}) {
     this.throwIfNotSetup("endStudy");
+    if (this._isEnding) {
+      log.debug("endStudy, already ending!");
+      return;
+    }
+    this._isEnding = true;
     log.debug(`endStudy ${reason}`);
     this.unsetActive();
     // TODO glind, think about reason vs fullname
@@ -309,7 +314,10 @@ class StudyUtils {
     }
     // these are all exits
     this._telemetry({study_state: "exit"}, "shield-study");
-    this.uninstall(); // TODO glind. should be controllable by arg?
+    if (!this._isEnding) {
+      // only call this at most once
+      this.uninstall(); // TODO glind. should be controllable by arg?
+    }
   }
 
   async endingQueryArgs() {
@@ -342,7 +350,7 @@ class StudyUtils {
       shield_version: UTILS_VERSION,
       type:           bucket,
       data,
-      testing:        this.telemetryTestingFlag,
+      testing:        !this.telemetryConfig.removeTestingFlag,
     };
 
     let validation;
