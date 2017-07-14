@@ -230,7 +230,7 @@ class StudyUtils {
       studyName: this.config.studyName,
       addon: this.config.addon,
       variation: this.getVariation(),
-      shieldId: this.getNormandyId(),
+      shieldId: this.getShieldId(),
     };
   }
   // TODO glind, maybe this is getter / setter?
@@ -314,10 +314,7 @@ class StudyUtils {
     }
     // these are all exits
     this._telemetry({study_state: "exit"}, "shield-study");
-    if (!this._isEnding) {
-      // only call this at most once
-      this.uninstall(); // TODO glind. should be controllable by arg?
-    }
+    this.uninstall(); // TODO glind. should be controllable by arg?
   }
 
   async endingQueryArgs() {
